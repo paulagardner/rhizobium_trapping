@@ -6,4 +6,3 @@
 - [ ] validate that workflow is functional from A -> Z (since around time of commit, files were reorganized)
 ##### Optional
 - [ ] rearrange files for reference genome to be in a more convenient directory (they are buried in informationally named folders due to the 'my reference is coded with a different ID because it's from a different source' issue
-- [ ] 
