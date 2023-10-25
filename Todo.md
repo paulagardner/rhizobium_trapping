@@ -2,6 +2,7 @@
 - [ ] change filepaths to reflect that 'workflow' files have been moved to the copied local repo on mesabi, 'rhizobium_trapping'
 
 ### Important
+- [ ] remove 'shell scripts' folder in github to reflect that it no longer exists in local mesabi repo
 - [ ] make a test plot from the R data 
 - [ ] validate that workflow is functional from A -> Z (since around time of commit, files were reorganized)
 ##### Optional
