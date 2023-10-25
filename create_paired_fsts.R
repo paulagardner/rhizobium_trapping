@@ -8,8 +8,8 @@ library(poolfstat)
 #tidyverse to save as rds at the end
 library(tidyverse)
 
-infile = 'sync_all_bams.sync' #name of sync file to analyze
-gff_filename = 'genome.gff3' #Name of annotation file
+infile = 'data/sync_all_bams.sync' #name of sync file to analyze
+gff_filename = 'data/genome.gff3' #Name of annotation file
 gene_output_filename = 'gene_tests.tsv' #Name of file for gene-level tests
 snp_output_filename = 'snp_tests.tsv' #name of file for gene-level tests
 poolsizes = rep(870021, 24) #pool size setting
@@ -17,7 +17,7 @@ poolsizes = rep(870021, 24) #pool size setting
 #Vector of treatments for testing allele frequency differences. MUST
 #be in the same order as the columns of the sync file. Currently, this
 #script is set up to test just one tratment factor. 
-pooldata = popsync2pooldata(sync.file="sync_all_bams.sync", poolsizes=rep(872001,24))
+pooldata = popsync2pooldata(sync.file="data/sync_all_bams.sync", poolsizes=rep(872001,24))
 
 #use this to compute global and per SNP FSTs:
 snp.fsts <- computeFST(pooldata, method="Anova")
