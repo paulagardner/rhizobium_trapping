@@ -6,6 +6,11 @@
 - [x] remove 'shell scripts' folder in github to reflect that it no longer exists in local mesabi repo
 - [ ] make a test plot from the R data 
 - [ ] validate that workflow is functional from A -> Z (since around time of repo creation, files were reorganized)
+  - [ ] sort.sh
+  - [ ] make_bam_list.sh
+  - [ ] create_mpileup.sh
+  - [ ] bash sync.sh
+  - [x] create_paired_fsts.R
 
 ##### Optional
 - [x] move R scripts and rds data into appropriate folders
