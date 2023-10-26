@@ -1,9 +1,12 @@
 #Critical
 - [x] change filepaths to reflect that 'workflow' files have been moved to the copied local repo on mesabi, 'rhizobium_trapping'
 - [x] update methods to include both paula's and rebecca's ideas for how to approach data analysis 
-- [ ] make your own notes on the 2015 paper in time for postdoc meeting
+- [x] make your own notes on the 2015 paper in time for postdoc meeting
+- [ ] understand, then write in methods, exactly what popoolation2 is doing to the data. Make it more specific rather than less, we can always cut later
+
 ### Important
 - [x] remove 'shell scripts' folder in github to reflect that it no longer exists in local mesabi repo
+- [ ] rebecca git tour
 - [ ] make a test plot from the R data 
 - [ ] validate that workflow is functional from A -> Z (since around time of repo creation, files were reorganized)
   - [ ] sort.sh
