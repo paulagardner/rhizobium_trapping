@@ -15,14 +15,12 @@ sbatch create_mpileup.sh
 #create a sync file 
 bash sync.sh
 
-#take sync file and genome data to calculate paired fsts in an R script:
-bash sync_to_rds.sh
-
 cd Fudge016/TrappingCh2/rhizobium_trapping
 #plot things in R:
 module load R
 #instructions for installing any needed R packages: msi.umn.edu/sw/r
 
+#take sync file and calculate paired FST values from it (currently stored in a .rds file in /data) 
 Rscript create_paired_fsts.R
 
 
