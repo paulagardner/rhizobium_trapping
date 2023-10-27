@@ -16,7 +16,7 @@
   - [ ] create_mpileup.sh
   - [ ] bash sync.sh
   - [x] create_paired_fsts.R
-
+- [ ] make github flowchart 
 ##### Optional
 - [x] move R scripts and rds data into appropriate folders
 ~~- [ ] rearrange files for reference genome to be in a more convenient directory (they are buried in informationally named folders due to the 'my reference is coded with a different ID because it's from a different source' issue~~ see 'important' 
