@@ -2,7 +2,7 @@
 #unzip your reference files: 
 #unzip GCF_000009265.1.zip
 
-cd Fudge016/TrappingCh2/workflow/shell_scripts
+cd Fudge016/TrappingCh2/rhizobium_trapping/shell_scripts
 #sort t	e .bam files (samtools mpileup might throw an error if this step is skipped:
 sbatch sort.sh
 
@@ -15,14 +15,13 @@ sbatch create_mpileup.sh
 #create a sync file 
 bash sync.sh
 
-#take sync file and genome data to calculate paired fsts in an R script:
-bash sync_to_rds.sh
 
-cd Fudge016/TrappingCh2/workflow
+cd Fudge016/TrappingCh2/rhizobium_trapping
 #plot things in R:
 module load R
 #instructions for installing any needed R packages: msi.umn.edu/sw/r
 
+#calculate paired FST values in R. Gets stored as a .rds file in /data
 Rscript create_paired_fsts.R
 
 
