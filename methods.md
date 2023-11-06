@@ -1,3 +1,12 @@
+### Overarching Questions
+1. How much is microbial genotype explained by, influenced by, or correlated with temperature, genotype, and soil type?
+   a. METHODS:
+   	i. PCA (using sync file)
+   	ii. Mixed linear model with FST? Mantel test?
+   	iii. Survivaorship bias from plant genotype -- plant pruning nodules?
+2. How much does microbial genotype explain, influence, or correlate with biological nitrogen fixation? (Total Plant N = biomass x Pct N)
+   a. Mixed linear model
+
 ### Comparing our methods to Jorrin and Imperial 2015 paper:
 
 ### Methods we have done so far: Filter reads with Trimmomatic (Kbase), align reads to Rlv reference genome, transform output with Sam Tools, detect SNPs (They used varscan, we used PoPoolation)
