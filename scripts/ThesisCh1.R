@@ -10,7 +10,9 @@ require("data.table")
 
 trapping <- read.csv("TrappingData.csv")
 
-fstmatrix <- readRDS("pairwisefsts.rds")
+fstmatrix <- read.csv("FSTmatrix.csv")
+
+phen.data <- read.csv("PhenotypeMatrix.csv")
 
 # PLANT DATA ####
 
@@ -539,3 +541,33 @@ corrgram(p.fst,order=FALSE,
 fstmatrix <- as_tibble(fstmatrix)
 data.pca <- princomp(fstmatrix)
 ?princomp
+
+# Mantel Test ####
+library(cluster)
+# Make sure data is ready for Mantel test:
+fstmatrix <- as.matrix(fstmatrix)
+
+# Get phenotype data ready for dissimilarity matrix
+phen.data <- as.data.frame(phen.data)
+phen.data.daisy <- subset(phen.data, select = -Treatment)
+
+# Make dissimilarity matrix for phenotype data
+install.packages("devtools")
+phen.dist <- dist(phen.data, method = "euclidean")
+# phen.matrix <- daisy(phenmatrixdaisy, metric = "euclidean",stand=FALSE)
+
+# Make distance objects
+fst.dist <- as.dist(fstmatrix)
+
+library(ade4)
+mantel.rtest(fst.dist, phen.dist, nrepet = 9999)
+dim(as.matrix(fstmatrix))
+dim(as.matrix(phen.dist))
+
+phen.matrix <- as.matrix(phen.dist)
+
+# WHERE TO PICK UP:
+# both vegan and ade4 package need matrices to be dist objects
+# investigate dist objects - how to make them?
+## need to use dist function, I think, to make dist object (instead of daisy)
+# then run mantel test
