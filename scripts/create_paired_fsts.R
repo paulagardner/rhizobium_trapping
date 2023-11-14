@@ -17,7 +17,16 @@ poolsizes = rep(870021, 24) #pool size setting
 #Vector of treatments for testing allele frequency differences. MUST
 #be in the same order as the columns of the sync file. Currently, this
 #script is set up to test just one tratment factor. 
+
+
 pooldata = popsync2pooldata(sync.file="~/Fudge016/TrappingCh2/rhizobium_trapping/data/sync_all_bams.sync", poolsizes=rep(872001,24))
+print("pooldata object made")
+
+test_pca <- randomallele.pca(pooldata, scale = TRUE, return.snploadings = FALSE, plot.pcs = c(1, 2),)
+write_rds(p.fst, '~/Fudge016/TrappingCh2/rhizobium_trapping/data/test_pca.rds')
+print("PCA calculated")
+
+
 
 #use this to compute global and per SNP FSTs:
 snp.fsts <- computeFST(pooldata, method="Anova")
