@@ -79,3 +79,26 @@ smalldata <- divide_and_update(smalldata, start_column = 3)
 # Fuck it we ball: try it on the whole data frame
 test4 <- lapply(data[, start_column_index:ncol(smalldata)], divideFraction)
 # All NAs, just one column. Need to learn to apply what we did on test3 to a whole data frame.
+
+
+# Try in tidyverse ####
+data.narrow <- data %>%
+  select(V1,V10:V50)
+
+data.narrow %>%
+  select(V10:V50) %>%
+  divideFraction_test()
+#Error in if (denominator != 0) { : missing value where TRUE/FALSE needed
+#  In addition: Warning messages:
+#    1: In divideFraction(.) : NAs introduced by coercion
+#  2: In divideFraction(.) : NAs introduced by coercion
+
+
+data.output <- data.narrow %>%
+  select(V10:V50) %>%
+  divideFraction_test2()
+# Warning messages:
+#  1: In divideFraction_test2(.) : NAs introduced by coercion
+# 2: In divideFraction_test2(.) : NAs introduced by coercion
+
+# Still didn't work! Need Chat GPT to help!
