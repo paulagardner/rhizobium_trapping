@@ -5,18 +5,19 @@ This is a repo that contains scripts and notes that enable, wherever feasible, e
 To do this, we used:
 
 ### Files:
-- #### a directory containing our .BAM files.
-  -ours were created by tools at kbase.us. This required aligning sequence data from each treatment to a chosen reference genome (for us, Rhizobium leguminosarum ==[SPECIFIC REFERENCE INFO HERE]==). In our case, each .BAM file represented one of all the combinations of:
-    - vetch ecotype
-    - warm/cool treatment
-    - soil origin
-    - [forgetting one more detail
-- #### a reference genome
+* #### a directory containing our .BAM files.
+ours were created by tools at kbase.us. This required aligning sequence data from each treatment to a chosen reference genome (for us, Rhizobium leguminosarum ==[SPECIFIC REFERENCE INFO HERE]==). In our case, each .BAM file represented one of all the combinations of:
+    * vetch ecotype
+    * warm/cool treatment
+    * soil origin
+    * [forgetting one more detail
+* #### a reference genome
 
 ### Software: 
-- Rstudio version ==FILL VERSION HERE==
-- PoPoolation2 version ==FILL VERSION HERE==
-- ==ETC I'M FORGETTING==
+* Rstudio version ==FILL VERSION HERE==
+* PoPoolation2 version ==FILL VERSION HERE==
+* samtools version 
+* ==ETC I'M FORGETTING==
 At time of publishing, the following should create a conda environment with the software versions one might use to perform these analyses:
 ```
 ```
