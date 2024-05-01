@@ -1,9 +1,15 @@
+#!/bin/bash -l 
+
+#running from here assumes that there is a directory of .bam files (for us: created by kbase) and 
+#the same reference genome that we use in kbase to create them.
 
 #unzip your reference files: 
 #unzip GCF_000009265.1.zip
 
-cd Fudge016/TrappingCh2/rhizobium_trapping/shell_scripts
-#sort t	e .bam files (samtools mpileup might throw an error if this step is skipped:
+#change directories to where scripts are being stoerd 
+cd Fudge016/TrappingCh2/rhizobium_trapping/scripts
+
+#sort the .bam files (samtools mpileup might throw an error if this step is skipped):
 sbatch sort.sh
 
 #create a list of these sorted .txt files
