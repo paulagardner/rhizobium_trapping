@@ -33,7 +33,9 @@ ________________
 
 [sort.sh](scripts/sort.sh): recursively sort all the .bams in one directory and generate sorted bam files (.bam.sorted) from them. The script puts these files in that directory. Sorting is a step necessary for further samtools operations. Otherwise, mpileup may not work. 
 
-[make_bam_list.sh](FIX LINK): generate a .txt file that contains all the paths of the sorted .bams . This is necessary for creating an mpileup file
+[make_bam_list.sh](scripts/make_bam_list.sh): generate a .txt file that contains all the paths of the sorted .bams . This is necessary for creating an mpileup file.
+
+
 Why do we need an mpileup? (I FORGET, EDIT THIS) 
 
 
