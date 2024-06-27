@@ -35,6 +35,8 @@ ________________
 
 [make_bam_list.sh](scripts/make_bam_list.sh): generate a .txt file that contains all the paths of the sorted .bams . This is necessary for creating an mpileup file.
 
+[create_mpileup.sh](scripts/create_mpileup.sh): generate a samtools mpileup file, which collates the reads from all .bam files into one file
+
 
 Why do we need an mpileup? (I FORGET, EDIT THIS) 
 
