@@ -28,6 +28,7 @@ ________________
 
 
 
+
 [meta.sh](https://github.com/paulagardner/rhizobium_trapping/blob/main/meta.sh) contains a sequential list of all bash commands that might be run to generate or re-generate the data. Currently, it is not configured for use in slurm. 
 
 ## File info, in order of how you run them
@@ -50,8 +51,7 @@ ________________
    output:   .sync file
 
 
-Why do we need an mpileup? (I FORGET, EDIT THIS) 
-
+Why do we need an mpileup? (I FORGET, EDIT THIS)
 
 
 
