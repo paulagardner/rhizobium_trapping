@@ -51,15 +51,19 @@ input:
 output:   
 *.mpileup file
             
+***
 
-[sync.sh](scripts/sync.sh): create a sync file from the mpileup
+[sync.sh](scripts/sync.sh): create a sync file from the mpileup so that popoolation2 can use it
 input:   
 *.mpileup file
 output:   
 *.sync file
 
-
-Why do we need an mpileup? (I FORGET, EDIT THIS)
+[alellefreqs.sh](): calculate allele frequency differences 
+input:
+.sync file 
+output: 
+.vcf file 
 
 
 
