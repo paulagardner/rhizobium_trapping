@@ -14,8 +14,9 @@ ours were created by tools at kbase.us. This required aligning sequence data fro
 * #### a reference genome
 
 ### Software: 
-* Rstudio version ==FILL VERSION HERE==
-* PoPoolation2 version ==FILL VERSION HERE==
+* R version ==FILL VERSION HERE==
+* R packages: ==fill in=
+* PoPoolation2 version [1201](https://sourceforge.net/projects/popoolation2/files/popoolation2_1201.zip/download)
 * samtools version 1.16
 * ==ETC I'M FORGETTING==
 At time of publishing, the following should create a conda environment with the software versions one might use to perform these analyses:
