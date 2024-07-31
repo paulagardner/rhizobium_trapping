@@ -49,10 +49,9 @@ snp_data <- convert_and_replace(data, start_column_index) #convert fraction rows
 
 # Display the result
 print("result_df made")
-print(head(snp_data))
 
 
-############################ENSURE HEADER NAMES ARE POPULATED VIA BAM FILE .TXT THAT POPOOLATION, SAMTOOLS WORK FROM#########################
+############################ENSURE HEADER NAMES ARE POPULATED VIA A BAM FILE .TXT THAT POPOOLATION, SAMTOOLS WORK FROM#########################
 lines <- readLines("sorted_bam_files.txt")
 
 # Process each line
@@ -60,131 +59,77 @@ sample_names <- sub("^.*bamfiles/", "", lines)  # Remove everything before and i
 sample_names <- sub("\\.sorted$", "", sample_names)  # Remove ".sorted"
 
 # Print the processed lines to check the result
-print("df of sample names from .bams")
-print(sample_names)
-
-
-
-# Example data frames
-# sample_names 
-# result_df
-samples_df <- data.frame(sample_names)
+print("df of sample names from .bams made")
+sample_names_df <- data.frame(sample_names)
 
 # Prefix to add
 prefix <- "major_alleles_"
 
 # Use a for loop to rename the major allele columns in the snp data
-for (i in 1:nrow(samples_df)) {
+for (i in 1:nrow(sample_names_df)) {
   snp_data_col_index <- i + 9  # Adjust index to start renaming from column 10
-  colnames(snp_data)[snp_data_col_index] <- paste0(prefix, samples_df$sample_names[i])
+  colnames(snp_data)[snp_data_col_index] <- paste0(prefixprefix <- prefix, sample_names_df$sample_names[i])
 }
 
-print(head(snp_data))
 
 
+
+###########################################       RDA ANALYSIS ############################################
 
 # #### ALL Replicons ####
+# drop rows with NA
+snp_data <- snp_data %>% drop_na() 
 
-# # Import file
-# load("result_df.RData")
-# # For some reason, this is called result_df
+# Add new names
+colnames(snp_data)[1] = "Chr"
+colnames(snp_data)[2] = "Pos"
+colnames(snp_data)[3] = "rc"
+colnames(snp_data)[4] = "allele_count"
+colnames(snp_data)[5] = "allele_states"
+colnames(snp_data)[6] = "deletion_sum"
+colnames(snp_data)[7] = "snp_type"
+colnames(snp_data)[8] = "major_alleles(maa)"
+colnames(snp_data)[9] = "minor_alleles(mia)"
 
-# # drop rows with NA
-# snp_data <- data.frame(result_df) 
-# head(snp_data)
-# snp_data <- snp_data %>% drop_na() 
-
-# # Add new names
-# colnames(snp_data)[1] = "Chr"
-# colnames(snp_data)[2] = "Pos"
-# colnames(snp_data)[3] = "rc"
-# colnames(snp_data)[4] = "allele_count"
-# colnames(snp_data)[5] = "allele_states"
-# colnames(snp_data)[6] = "deletion_sum"
-# colnames(snp_data)[7] = "snp_type"
-# colnames(snp_data)[8] = "major_alleles(maa)"
-# colnames(snp_data)[9] = "minor_alleles(mia)"
-# colnames(snp_data)[10] = "AUMerit_Roseau_Cold"
-# colnames(snp_data)[11] = "AUMerit_Roseau_Warm"
-# colnames(snp_data)[12] = "AUMerit_Rosemount_Cold"
-# colnames(snp_data)[13] = "AUMerit_Rosemount_Warm"
-# colnames(snp_data)[14] = "AUMerit_StPaul_Cold"
-# colnames(snp_data)[15] = "AUMerit_StPaul_Warm"
-# colnames(snp_data)[16] = "Hungvillosa_Roseau_Cold"
-# colnames(snp_data)[17] = "Hungvillosa_Roseau_Warm"
-# colnames(snp_data)[18] = "Hungvillosa_Rosemount_Cold"
-# colnames(snp_data)[19] = "Hungvillosa_Rosemount_Warm"
-# colnames(snp_data)[20] = "Hungvillosa_StPaul_Cold"
-# colnames(snp_data)[21] = "Hungvillosa_StPaul_Warm"
-# colnames(snp_data)[22] = "MSP4045_Roseau_Cold"
-# colnames(snp_data)[23] = "MSP4045_Roseau_Warm"
-# colnames(snp_data)[24] = "MSP4045_Rosemount_Cold"
-# colnames(snp_data)[25] = "MSP4045_Rosemount_Warm"
-# colnames(snp_data)[26] = "MSP4045_StPaul_Cold"
-# colnames(snp_data)[27] = "MSP4045_StPaul_Warm"
-# colnames(snp_data)[28] = "PupleBounty_StPaul_Warm"
-# colnames(snp_data)[29] = "PupleBounty_Roseau_Cold"
-# colnames(snp_data)[30] = "PupleBounty_Roseau_Warm"
-# colnames(snp_data)[31] = "PupleBounty_Rosemount_Cold"
-# colnames(snp_data)[32] = "PupleBounty_Rosemount_Warm"
-# colnames(snp_data)[33] = "PupleBounty_StPaul_Cold"
-# colnames(snp_data)[34] = "mia_AUMerit_Roseau_Cold"
-# colnames(snp_data)[35] = "mia_AUMerit_Roseau_Warm"
-# colnames(snp_data)[36] = "mia_AUMerit_Rosemount_Cold"
-# colnames(snp_data)[37] = "mia_AUMerit_Rosemount_Warm"
-# colnames(snp_data)[38] = "mia_AUMerit_StPaul_Cold"
-# colnames(snp_data)[39] = "mia_AUMerit_StPaul_Warm"
-# colnames(snp_data)[40] = "mia_Hungvillosa_Roseau_Cold"
-# colnames(snp_data)[41] = "mia_Hungvillosa_Roseau_Warm"
-# colnames(snp_data)[42] = "mia_Hungvillosa_Rosemount_Cold"
-# colnames(snp_data)[43] = "mia_Hungvillosa_Rosemount_Warm"
-# colnames(snp_data)[44] = "mia_Hungvillosa_StPaul_Cold"
-# colnames(snp_data)[45] = "mia_Hungvillosa_StPaul_Warm"
-# colnames(snp_data)[46] = "mia_MSP4045_Roseau_Cold"
-# colnames(snp_data)[47] = "mia_MSP4045_Roseau_Warm"
-# colnames(snp_data)[48] = "mia_MSP4045_Rosemount_Cold"
-# colnames(snp_data)[49] = "mia_MSP4045_Rosemount_Warm"
-# colnames(snp_data)[50] = "mia_MSP4045_StPaul_Cold"
-# colnames(snp_data)[51] = "mia_MSP4045_StPaul_Warm"
-# colnames(snp_data)[52] = "mia_PupleBounty_StPaul_Warm"
-# colnames(snp_data)[53] = "mia_PupleBounty_Roseau_Cold"
-# colnames(snp_data)[54] = "mia_PupleBounty_Roseau_Warm"
-# colnames(snp_data)[55] = "mia_PupleBounty_Rosemount_Cold"
-# colnames(snp_data)[56] = "mia_PupleBounty_Rosemount_Warm"
-# colnames(snp_data)[57] = "mia_PupleBounty_StPaul_Cold"
-
-# # I actually think we don't need minor alleles!
-
-# small_snp_data <- snp_data[,c(1:2,10:33)]
-# small_snp_data$SNP <- paste(small_snp_data$Chr,small_snp_data$Pos,sep="_")
-# head(small_snp_data)
-
-# # Make last row the first row
-# small_snp_data <- small_snp_data %>%
-#   relocate(SNP, before="Chr")
+# minor alleles not used in analysis
 
 
-# # Get rid of columns I don't need
-# small_snp_data <- small_snp_data[,-c(2:3)]
-# head(small_snp_data)
+#drop the columns between 'pos' and the major allele data  
+small_snp_data <- snp_data[,c(1:2,10:33)]
+small_snp_data$SNP <- paste(small_snp_data$Chr,small_snp_data$Pos,sep="_")
 
-# # Make column 1 the row names
+# Make last row the first row
+small_snp_data <- small_snp_data %>%
+relocate(SNP, before="Chr")
+#print(head(small_snp_data))
 
-# RDA_input <- small_snp_data[,-1]
-# rownames(RDA_input) <- small_snp_data[,1]
-# head(RDA_input)
 
-# RDA_input <- t(RDA_input)
-# RDA_input <- as.data.frame(RDA_input)
-# rownames(RDA_input)
+# Get rid of columns I don't need
+small_snp_data <- small_snp_data[,-c(2:3)]
+#head(small_snp_data)
 
-# # extract and define metadata from snp matrix row names
-# meta <- data.frame("ID" = rownames(RDA_input))
-# meta <- separate(meta,col=ID, into = c("Ecotype","Site","Temp"), sep = "_")
-# meta$ID <- rownames(RDA_input)
-# meta <- as.data.frame(meta)
+# Make column 1 the row names
+RDA_input <- small_snp_data[,-1]
+rownames(RDA_input) <- small_snp_data[,1]
+#head(RDA_input)
 
-# SNP_rda <- rda(RDA_input ~ meta$Ecotype + meta$Site + meta$Temp)
+RDA_input <- t(RDA_input)
+RDA_input <- as.data.frame(RDA_input)
+
+# extract and define metadata from snp matrix row names
+meta <- data.frame("ID" = rownames(RDA_input))
+meta <- separate(meta,col=ID, into = c("Ecotype","Site","Temp"), sep = "_") #warning produced:
+#expected 3 pieces, additional pieces discarded in 24 rows"
+meta$ID <- rownames(RDA_input)
+meta <- as.data.frame(meta)
+print(head(meta))
+
+# print("data to perform RDA made")
+
+
+
+
+#SNP_rda <- rda(RDA_input ~ meta$Ecotype + meta$Site + meta$Temp)
 
 # smry <- summary(SNP_rda)
 # all_rda <- SNP_rda
