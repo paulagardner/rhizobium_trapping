@@ -494,9 +494,11 @@ metadata_list <- list()
 site_names <- c("", "Rosemount", "Roseau", "StPaul") #having this be blank is an attempt at me including an unfiltered dataset
 for (site_name in site_names) {
   if (site_name == "") {site_name <- "AllData"} #this gives a name to the unfiltered data
+  
   if (site_name == "AllData") { 
   RDA_inputs_list[[site_name]] <- RDA_input
-  metadata_list[[site_name]] <- meta} #this is handling for the unfiltered case
+  metadata_list[[site_name]] <- meta} #this is handling the unfiltered case
+  
   else {
   RDA_inputs_list[[site_name]] <- RDA_input %>% filter(grepl(site_name,rownames(RDA_input)))
   metadata_list[[site_name]] <- meta %>% filter(grepl(site_name, ID))
@@ -514,22 +516,43 @@ variances <- list()
 plotting_dfs <- list()
 #then, you'd loop over your list length, and not necessarily your site names
 #the if() statement is so that you do the full model if levels allow
-print()
-
 
 print(length(unique(RDA_inputs_list[])))
+print(length(unique(RDA_analyses_list[])))
 print(lapply(metadata_list, function(df) length(unique(df$Site))))
-print(lapply())
+print(lapply(metadata_list, length(unique(RDA_inputs_list[]))))
 
-
-for (site_name in site_names) {
-  if(lapply(metadata_list, function(df) length(unique(df$Site))) >1)
-  {RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] 
-  ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site 
-  + metadata_list[[site_name]]$Temp)}
-  +++++++++++
-
+for (i in metadata_list) {
+  print(length(unique(i$Site)))
 }
+
+#actually do the RDAs
+for (site_name in site_names) {
+  if (
+    for (i in metadata_list) 
+      length(unique(i$Site)) >1 
+    ){RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site + metadata_list[[site_name]]$Temp)
+  }}
+
+############THIS OWRKS SO MODEL IT 
+for (i in metadata_list) {
+  if (length(unique(i$Site)) >1) {print('multiple levels')}
+  else {print('one level')}
+  }
+  
+  
+for (i in metadata_list) {
+  if (length(unique(i$Site)) >1) {RDA_analyses_list[[i]] <- rda(RDA_inputs_list[[i]] ~ metadata_list[[i]]$Ecotype + metadata_list[[i]]$Site + metadata_list[[i]]$Temp)}
+  else {RDA_analyses_list[[i]] <- rda(RDA_inputs_list[[i]] ~ metadata_list[[i]]$Ecotype + metadata_list[[i]]$Temp)}
+}
+  
+  
+  
+#   # if(lapply(metadata_list, function(df) length(unique(df$Site))) >1)
+#   {RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] 
+#   ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site 
+#   + metadata_list[[site_name]]$Temp)}
+# }
 
 for (site_name in site_names) {
   if (length(unique(metadata_list[[site_name]]$Site) >1)){RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site + metadata_list[[site_name]]$Temp)}
