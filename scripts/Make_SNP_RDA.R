@@ -191,8 +191,8 @@ rda.plot <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Site) +
    geom_hline(yintercept=0, linetype="dotted") +
    geom_vline(xintercept=0, linetype="dotted") +
    scale_color_manual(values = wes_palette("Darjeeling1"), name = "Sites") +
-   labs(title = "RDA of Allele Frequencies", subtitle = "All sites", x = paste("RDA1 (", round(variance[1], 2),"%)"),
-        y = paste("RDA1 (", round(all_variance[2], 2),"%)")) +
+   labs(title = "RDA of Allele Frequencies", subtitle = "All sites", x = paste("RDA1 (", round(all_variance[1], 2),"%)"),
+        y = paste("RDA1 (", round(all_variance[2], 2),"%)")) 
    
 rda.plot
 
@@ -473,25 +473,12 @@ RDAs <- function(RDA_input, metadata) {
 
 ########################break down analyses by site #############
 
-
-# #make metadata info and RDA input dataframes
-# for (site_name in site_names) {
-#   var_name <- paste0("metadata_", site_name)
-#   assign(var_name, meta %>% filter(grepl(site_name, ID)))
-# }
-# 
-# #make RDA input dataframes
-# for (site_name in site_names) {
-#   var_name <- paste0("RDA_input_", site_name)
-#   assign(var_name, RDA_input %>% filter(grepl(site_name,rownames(RDA_input))))
-# }
-
-
 #make blank lists to store our variables to reference when doing the RDAs
 RDA_inputs_list <- list()
 metadata_list <- list()
 #create inputs and metadata to do RDA analyses with
-site_names <- c("", "Rosemount", "Roseau", "StPaul") #having this be blank is an attempt at me including an unfiltered dataset
+site_names <- c("", "Rosemount", "Roseau", "StPaul") #having this be blank is how I'm using the unfiltered data
+
 for (site_name in site_names) {
   if (site_name == "") {site_name <- "AllData"} #this gives a name to the unfiltered data
   
@@ -505,73 +492,74 @@ for (site_name in site_names) {
   }
 }
 
+#the actual RDA analysis
+RDA_analyses_list <- list()
 
+for (i in seq_along(metadata_list)) {
+  metadata_df <- metadata_list[[i]] #seq_along and df renaming *may* not be necessary]
+  data_input <- RDA_inputs_list[[i]]
+  metadata_df_name <- names(metadata_list)[i]
+  
+  if (length(unique(metadata_df$Site)) > 1) {
+    # print(head(RDA_inputs_list[[i]]))
+    RDA_analyses_list[[metadata_df_name]] <- rda(data_input ~ metadata_df$Ecotype 
+                                                 + metadata_df$Site 
+                                                 + metadata_df$Temp)
 
-###########analyses
-
-#do RDA and summaries
-RDA_analyses_list <- list() #could potentially add RDA for everything in, if it proves useful
-summaries <- list()
-variances <- list()
-plotting_dfs <- list()
-#then, you'd loop over your list length, and not necessarily your site names
-#the if() statement is so that you do the full model if levels allow
-
-print(length(unique(RDA_inputs_list[])))
-print(length(unique(RDA_analyses_list[])))
-print(lapply(metadata_list, function(df) length(unique(df$Site))))
-print(lapply(metadata_list, length(unique(RDA_inputs_list[]))))
-
-for (i in metadata_list) {
-  print(length(unique(i$Site)))
-}
-
-#actually do the RDAs
-for (site_name in site_names) {
-  if (
-    for (i in metadata_list) 
-      length(unique(i$Site)) >1 
-    ){RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site + metadata_list[[site_name]]$Temp)
-  }}
-
-############THIS OWRKS SO MODEL IT 
-for (i in metadata_list) {
-  if (length(unique(i$Site)) >1) {print('multiple levels')}
-  else {print('one level')}
+    print("analysis")
+  } 
+  else {
+    RDA_analyses_list[[metadata_df_name]] <- rda(data_input ~ metadata_df$Ecotype
+                                                 + metadata_df$Temp) #no site, as there is only
+    #one site in these samples (see: if statement)
+    print("outside loop")
+    
+  
   }
   
-  
-for (i in metadata_list) {
-  if (length(unique(i$Site)) >1) {RDA_analyses_list[[i]] <- rda(RDA_inputs_list[[i]] ~ metadata_list[[i]]$Ecotype + metadata_list[[i]]$Site + metadata_list[[i]]$Temp)}
-  else {RDA_analyses_list[[i]] <- rda(RDA_inputs_list[[i]] ~ metadata_list[[i]]$Ecotype + metadata_list[[i]]$Temp)}
 }
   
-  
-  
-#   # if(lapply(metadata_list, function(df) length(unique(df$Site))) >1)
-#   {RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] 
-#   ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site 
-#   + metadata_list[[site_name]]$Temp)}
-# }
-
-for (site_name in site_names) {
-  if (length(unique(metadata_list[[site_name]]$Site) >1)){RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Site + metadata_list[[site_name]]$Temp)}
-  else {RDA_analyses_list[[site_name]] <- rda(RDA_inputs_list[[site_name]] ~ metadata_list[[site_name]]$Ecotype + metadata_list[[site_name]]$Temp)}
-  summaries[[site_name]] <- summary(RDA_analyses_list[[site_name]])
-  variances[[site_name]] <- RDA_analyses_list[[site_name]]$CA$eig/RDA_analyses_list[[site_name]]$tot.chi*100
-  plotting_dfs[[site_name]] <- data.frame(summaries[[site_name]]$sites[,1:2])
-}
-
 
 ###PLOTS
+summaries_list <- list()
+variances_list <- list()
+RDA_plots <- list()
+# df_list <- list()
 
-rda.plot <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Site) +
-  geom_point(aes(color = Site, shape=Temp),size=2.5) +
-  geom_hline(yintercept=0, linetype="dotted") +
-  geom_vline(xintercept=0, linetype="dotted") +
-  scale_color_manual(values = wes_palette("Darjeeling1"), name = "Sites") +
-  labs(title = "RDA of Allele Frequencies", subtitle = "All sites", x = paste("RDA1 (", round(variance[1], 2),"%)"),
-       y = paste("RDA1 (", round(all_variance[2], 2),"%)")) +
+
+for (i in seq_along(RDA_analyses_list)) {
+  item <- RDA_analyses_list[[i]]
+  item_name <- names(RDA_analyses_list[i])
+  summaries_list[[item_name]] <- summary(item)
+  variances_list[[item_name]] <- item$CA$eig/item$tot.chi*100
+  df1 <- data.frame(summaries_list[[item_name]]$sites[,1:2])
+  df1$Ecotype <- metadata_list[[item_name]]$Ecotype
+  df1$Site <- metadata_list[[item_name]]$Site
+  df1$Temp <- metadata_list[[item_name]]$Temp
   
+
+  if (length(unique(metadata_list[[item_name]]$Site)) >1) {
+    RDA_plots[[item_name]] <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Site) +
+      geom_point(aes(color = Site, shape=Temp),size=2.5) +
+      geom_hline(yintercept=0, linetype = 'dotted') + 
+      geom_vline(xintercept=0, linetype = 'dotted') +
+      scale_color_manual(values = wes_palette("Darjeeling1"), name = "Sites") +
+      labs(title = "RDA of Allele Frequencies", subtitle = "All sites", 
+           x= paste("RDA1", round(variances_list[[item_name]][1], 2),"%"),
+           y= paste("RDA2", round(variances_list[[item_name]][2], 2), "%"))
+  }
+  else {
+    RDA_plots[[item_name]] <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Temp) +
+      geom_point(aes(color = Temp),size=3) +
+      geom_hline(yintercept=0, linetype="dotted") +
+      geom_vline(xintercept=0, linetype="dotted") +
+      scale_color_manual(values=c("lightskyblue2", "salmon1")) +
+      labs(title = paste("Site:",item_name), x = paste("RDA1 (", round(variances_list[[item_name]][1], 2),"%)"),
+           y = paste("RDA1 (", round(variances_list[[item_name]][2], 2),"%)")) +
+      theme_bw()
+  }
+  
+}
+
 
 
