@@ -1,4 +1,5 @@
 # library(vcfR)
+
 #confirming which packages are actually used 
 library(vegan)
 library(ggplot2)
@@ -24,6 +25,8 @@ print("working directory set to data")
 
 # load in as a df. not sure why read.table doesn't maintain headers as I'd like
 data <- read.delim("snp_freq_diffs_test_mincov2_rc", sep = "\t", header = T)
+# data <- read.delim("old_mincov2_data", sep = "\t", header = T)
+# data <- read.delim("snp_freq_diffs_test_rc", sep = "\t", header = T)
 print(head(data))
 
 
@@ -75,9 +78,6 @@ for (i in 1:nrow(sample_names_df)) {
 
 
 
-
-###########################################       RDA ANALYSIS ############################################
-
 # #### ALL Replicons ####
 # drop rows with NA
 snp_data <- snp_data %>% drop_na() 
@@ -112,16 +112,16 @@ meta <- separate(meta,col=ID, into = c("Ecotype","Site","Temp"), sep = "_", extr
 
 meta$ID <- rownames(RDA_input)
 meta <- as.data.frame(meta)
-print(head(meta))
- 
-
-
-
-# print("data to perform RDA made")
-SNP_rda <- rda(RDA_input ~ meta$Ecotype + meta$Site + meta$Temp)
-smry <- summary(SNP_rda)
-all_rda <- SNP_rda
-all_variance <- SNP_rda$CA$eig/SNP_rda$tot.chi*100
+# print(head(meta))
+#
+#
+#
+#
+# # print("data to perform RDA made")
+# SNP_rda <- rda(RDA_input ~ meta$Ecotype + meta$Site + meta$Temp)
+# smry <- summary(SNP_rda)
+# all_rda <- SNP_rda
+# all_variance <- SNP_rda$CA$eig/SNP_rda$tot.chi*100
 
 # all_varp <- varpart(RDA_input, ~ meta$Ecotype, ~ meta$Site, ~ meta$Temp) # Var part not relevant
 
@@ -147,9 +147,9 @@ all_variance <- SNP_rda$CA$eig/SNP_rda$tot.chi*100
 
 
 # # What if we take out ecotype, as Liana suggested?
-SNP_rda_no_ecotype <- rda(RDA_input ~ meta$Site + meta$Temp)
-smry_no_ecotype <- summary(SNP_rda_no_ecotype)
-rda.model.no.ecotype<-anova(SNP_rda_no_ecotype, step=1000, perm.max=1000, by= "terms")
+# SNP_rda_no_ecotype <- rda(RDA_input ~ meta$Site + meta$Temp)
+# smry_no_ecotype <- summary(SNP_rda_no_ecotype)
+# rda.model.no.ecotype<-anova(SNP_rda_no_ecotype, step=1000, perm.max=1000, by= "terms")
 
 #SAMTOOLS 1.10
 # # Summary:
@@ -170,63 +170,63 @@ rda.model.no.ecotype<-anova(SNP_rda_no_ecotype, step=1000, perm.max=1000, by= "t
 
 
 # # What if we just look at site?
-SNP_rda_only_site <- rda(RDA_input ~ meta$Site)
-rda.model.only.site <-anova(SNP_rda_only_site, step=1000, perm.max=1000, by= "terms")
-
-summary_rda_only_site <- data.frame(Term=row.names(rda.model.only.site),
-                                      Df=rda.model.only.site$Df,
-                                      Prop.Var = round(rda.model.only.site$Variance/sum(rda.model.only.site$Variance),3),
-                                      Fstat=round(rda.model.only.site$F,2),
-                                      Pvalue=round(rda.model.only.site$`Pr(>F)`,3),
-                                      Radj=as.numeric(RsquareAdj(SNP_rda_only_site))[2])
-
-df1  <- data.frame(smry$sites[,1:2])    # PC1 and PC2
-df2  <- data.frame(smry$biplot[,1:2])   # loadings for PC1 and PC2
-df1$Ecotype <- meta$Ecotype
-df1$Site <- meta$Site
-df1$Temp <- meta$Temp
-
-rda.plot <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Site) +
-   geom_point(aes(color = Site, shape=Temp),size=2.5) +
-   geom_hline(yintercept=0, linetype="dotted") +
-   geom_vline(xintercept=0, linetype="dotted") +
-   scale_color_manual(values = wes_palette("Darjeeling1"), name = "Sites") +
-   labs(title = "RDA of Allele Frequencies", subtitle = "All sites", x = paste("RDA1 (", round(all_variance[1], 2),"%)"),
-        y = paste("RDA1 (", round(all_variance[2], 2),"%)")) 
-   
-rda.plot
-
-rownames(df2) <- gsub("sam\\$", "", rownames(df2))
-
-#############do we want/need this? 
-rda.temp <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Temp) +
-   geom_point(aes(color = Temp)) +
-   geom_hline(yintercept=0, linetype="dotted") +
-   geom_vline(xintercept=0, linetype="dotted") +
-   scale_color_manual(values = wes_palette("Darjeeling1"), name = "Temp")
-
-rownames(df2) <- gsub("sam\\$", "", rownames(df2))
-
-
-# Run with anova ####
-all_results <- anova(all_rda)
-
-# Code from Liana script
-rda.model.all<-anova(all_rda, step=1000, perm.max=1000, by= "terms")
-
-summary_rda_all <- data.frame(Term=row.names(rda.model.all),
-                                 Df=rda.model.all$Df,
-                                 Prop.Var = round(rda.model.all$Variance/sum(rda.model.all$Variance),3),
-                                 Fstat=round(rda.model.all$F,2),
-                                 Pvalue=round(rda.model.all$`Pr(>F)`,3),
-                                 Radj=as.numeric(RsquareAdj(SNP_rda))[2])
-
-summary_rda_no_ecotype <- data.frame(Term=row.names(rda.model.no.ecotype),
-                              Df=rda.model.no.ecotype$Df,
-                              Prop.Var = round(rda.model.no.ecotype$Variance/sum(rda.model.no.ecotype$Variance),3),
-                              Fstat=round(rda.model.no.ecotype$F,2),
-                              Pvalue=round(rda.model.no.ecotype$`Pr(>F)`,3),
-                              Radj=as.numeric(RsquareAdj(SNP_rda_no_ecotype))[2])
+# SNP_rda_only_site <- rda(RDA_input ~ meta$Site)
+# rda.model.only.site <-anova(SNP_rda_only_site, step=1000, perm.max=1000, by= "terms")
+#
+# summary_rda_only_site <- data.frame(Term=row.names(rda.model.only.site),
+#                                       Df=rda.model.only.site$Df,
+#                                       Prop.Var = round(rda.model.only.site$Variance/sum(rda.model.only.site$Variance),3),
+#                                       Fstat=round(rda.model.only.site$F,2),
+#                                       Pvalue=round(rda.model.only.site$`Pr(>F)`,3),
+#                                       Radj=as.numeric(RsquareAdj(SNP_rda_only_site))[2])
+#
+# df1  <- data.frame(smry$sites[,1:2])    # PC1 and PC2
+# df2  <- data.frame(smry$biplot[,1:2])   # loadings for PC1 and PC2
+# df1$Ecotype <- meta$Ecotype
+# df1$Site <- meta$Site
+# df1$Temp <- meta$Temp
+#
+# rda.plot <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Site) +
+#    geom_point(aes(color = Site, shape=Temp),size=2.5) +
+#    geom_hline(yintercept=0, linetype="dotted") +
+#    geom_vline(xintercept=0, linetype="dotted") +
+#    scale_color_manual(values = wes_palette("Darjeeling1"), name = "Sites") +
+#    labs(title = "RDA of Allele Frequencies", subtitle = "All sites", x = paste("RDA1 (", round(all_variance[1], 2),"%)"),
+#         y = paste("RDA1 (", round(all_variance[2], 2),"%)"))
+#
+# rda.plot
+#
+# rownames(df2) <- gsub("sam\\$", "", rownames(df2))
+#
+# #############do we want/need this?
+# rda.temp <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Temp) +
+#    geom_point(aes(color = Temp)) +
+#    geom_hline(yintercept=0, linetype="dotted") +
+#    geom_vline(xintercept=0, linetype="dotted") +
+#    scale_color_manual(values = wes_palette("Darjeeling1"), name = "Temp")
+#
+# rownames(df2) <- gsub("sam\\$", "", rownames(df2))
+#
+#
+# # Run with anova ####
+# all_results <- anova(all_rda)
+#
+# # Code from Liana script
+# rda.model.all<-anova(all_rda, step=1000, perm.max=1000, by= "terms")
+#
+# summary_rda_all <- data.frame(Term=row.names(rda.model.all),
+#                                  Df=rda.model.all$Df,
+#                                  Prop.Var = round(rda.model.all$Variance/sum(rda.model.all$Variance),3),
+#                                  Fstat=round(rda.model.all$F,2),
+#                                  Pvalue=round(rda.model.all$`Pr(>F)`,3),
+#                                  Radj=as.numeric(RsquareAdj(SNP_rda))[2])
+#
+# summary_rda_no_ecotype <- data.frame(Term=row.names(rda.model.no.ecotype),
+#                               Df=rda.model.no.ecotype$Df,
+#                               Prop.Var = round(rda.model.no.ecotype$Variance/sum(rda.model.no.ecotype$Variance),3),
+#                               Fstat=round(rda.model.no.ecotype$F,2),
+#                               Pvalue=round(rda.model.no.ecotype$`Pr(>F)`,3),
+#=                               Radj=as.numeric(RsquareAdj(SNP_rda_no_ecotype))[2])
 
 # # Permutation test for rda under reduced model
 # # Terms added sequentially (first to last)
@@ -242,229 +242,187 @@ summary_rda_no_ecotype <- data.frame(Term=row.names(rda.model.no.ecotype),
 
 # #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-
-
-############# Roseau ####
-
-RDA_input %>%
-  filter(grepl("Roseau",rownames(RDA_input))) -> RDA_input_Roseau
-
-rownames(RDA_input_Roseau)
-# Success!!
-# Now for meta:
-
-meta_Roseau <- meta %>%
-  filter(grepl("Roseau",ID))
-
-# Run RDA
-SNP_rda_Roseau <- rda(RDA_input_Roseau ~ meta_Roseau$Ecotype + meta_Roseau$Temp)
-# SNP_rda_Roseau <- rda(RDA_input_Roseau ~ meta_Roseau$Temp)
-
-# Anova
-rda.model.Roseau<-anova(SNP_rda_Roseau, step=1000, perm.max=1000, by= "terms")
-
-
-# Model: rda(formula = RDA_input_Roseau ~ meta_Roseau$Ecotype + meta_Roseau$Temp)
-#                      Df  Variance F       Pr(>F)
-# meta_Roseau$Ecotype  3   6265.4   1.3029  0.116
-# meta_Roseau$Temp     1   2698.6   1.6835  0.071 .
-# Residual             3   4809.0
-
-# Temp approaching significance: p = 0.071
-
-# LESS significant when I take out ecotype as a term...
-# Model: rda(formula = RDA_input_Roseau ~ meta_Roseau$Temp)
-#                   Df  Variance  F       Pr(>F)
-# meta_Roseau$Temp  1   2698.6    1.4621  0.129
-# Residual          6   11074.4
-
-
-smry_Roseau <- summary(SNP_rda_Roseau)
-variance_Roseau <- SNP_rda_Roseau$CA$eig/SNP_rda_Roseau$tot.chi*100
-#varp_Roseau <- varpart(RDA_input_Roseau, ~ meta_Roseau$Ecotype, ~ meta_Roseau$Temp)
-summary_rda_Roseau <- data.frame(Term=row.names(rda.model.Roseau),
-                              Df=rda.model.Roseau$Df,
-                              Prop.Var = round(rda.model.Roseau$Variance/sum(rda.model.Roseau$Variance),3),
-                              Fstat=round(rda.model.Roseau$F,2),
-                              Pvalue=round(rda.model.Roseau$`Pr(>F)`,3),
-                              Radj=as.numeric(RsquareAdj(SNP_rda_Roseau))[2])
-
-# Get ready to plot
-df1_Roseau  <- data.frame(smry_Roseau$sites[,1:2])       # PC1 and PC2
-df2_Roseau  <- data.frame(smry_Roseau$biplot[,1:2])   # loadings for PC1 and PC2
-df1_Roseau$Ecotype <- meta_Roseau$Ecotype
-df1_Roseau$Temp <- meta_Roseau$Temp
-
-rda.plot.Roseau <- ggplot(df1_Roseau, aes(x=RDA1, y=RDA2), group = Temp) +
-  geom_point(aes(color = Temp),size=3) +
-  geom_hline(yintercept=0, linetype="dotted") +
-  geom_vline(xintercept=0, linetype="dotted") +
-  scale_color_manual(values=c("lightskyblue2", "salmon1")) +
-  labs(title = "Site: Roseau", x = paste("RDA1 (", round(variance_Roseau[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_Roseau[2], 2),"%)")) +
-  theme_bw()
-
-rda.plot.Roseau
-
-
-# # St Paul ####
-RDA_input_StPaul <- RDA_input %>%
-  filter(grepl("StPaul",rownames(RDA_input)))
-
-rownames(RDA_input_StPaul)
-# Success!!
-# Now for meta:
-
-meta_StPaul <- meta %>%
-  filter(grepl("StPaul",ID))
-
-#Run RDA
-SNP_rda_StPaul <- rda(RDA_input_StPaul ~ meta_StPaul$Ecotype + meta_StPaul$Temp)
-# SNP_rda_StPaul <- rda(RDA_input_StPaul ~ meta_StPaul$Temp)
-
-smry_StPaul <- summary(SNP_rda_StPaul)
-variance_StPaul <- SNP_rda_StPaul$CA$eig/SNP_rda_StPaul$tot.chi*100
-#varp_StPaul <- varpart(RDA_input_StPaul, ~ meta_StPaul$Ecotype, ~ meta_StPaul$Temp)
-
-# Get ready to plot
-df1_StPaul  <- data.frame(smry_StPaul$sites[,1:2])       # PC1 and PC2
-df2_StPaul  <- data.frame(smry_StPaul$biplot[,1:2])   # loadings for PC1 and PC2
-df1_StPaul$Ecotype <- meta_StPaul$Ecotype
-df1_StPaul$Temp <- meta_StPaul$Temp
-
-rda.plot.StPaul <- ggplot(df1_StPaul, aes(x=RDA1, y=RDA2), group = Temp) +
-  geom_point(aes(color = Temp),size=3) +
-  geom_hline(yintercept=0, linetype="dotted") +
-  geom_vline(xintercept=0, linetype="dotted") +
-  scale_color_manual(values=c("lightskyblue2", "salmon1")) +
-  labs(title = "Site: St. Paul", x = paste("RDA1 (", round(variance_StPaul[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_StPaul[2], 2),"%)")) +
-  theme_bw()
-
-
-# # Permanova
-
-rda.model.StPaul<-anova(SNP_rda_StPaul, step=1000, perm.max=1000, by= "terms")
-
-# Model: rda(formula = RDA_input_StPaul ~ meta_StPaul$Ecotype + meta_StPaul$Temp)
-#                      Df Variance F       Pr(>F)
-# meta_StPaul$Ecotype  3  14349.0  0.8217  0.579
-# meta_StPaul$Temp     1   2505.9  0.4305  0.694
-# Residual             3  17462.0
-
-# p even HIGHER when we take out ecotype term
-# Model: rda(formula = RDA_input_StPaul ~ meta_StPaul$Temp)
-#                   Df    Variance  F       Pr(>F)
-# meta_StPaul$Temp  1     2506      0.4726  0.702
-# Residual          6     31811
-
-summary_rda_StPaul <- data.frame(Term=row.names(rda.model.StPaul),
-                                 Df=rda.model.StPaul$Df,
-                                 Prop.Var = round(rda.model.StPaul$Variance/sum(rda.model.StPaul$Variance),3),
-                                 Fstat=round(rda.model.StPaul$F,2),
-                                 Pvalue=round(rda.model.StPaul$`Pr(>F)`,3),
-                                 Radj=as.numeric(RsquareAdj(SNP_rda_StPaul))[2])
-
-
-
-# # Rosemount ####
-RDA_input_Rosemount <- RDA_input %>%
-  filter(grepl("Rosemount",rownames(RDA_input)))
-
-rownames(RDA_input_Rosemount)
-# Success!!
-# Now for meta:
-
-meta_Rosemount <- meta %>%
-  filter(grepl("Rosemount",ID))
-
-# Run RDA
-SNP_rda_Rosemount <- rda(RDA_input_Rosemount ~ meta_Rosemount$Ecotype + meta_Rosemount$Temp)
-# SNP_rda_Rosemount <- rda(RDA_input_Rosemount ~ meta_Rosemount$Temp)
-
-smry_Rosemount <- summary(SNP_rda_Rosemount)
-variance_Rosemount <- SNP_rda_Rosemount$CA$eig/SNP_rda_Rosemount$tot.chi*100
-varp_Rosemount <- varpart(RDA_input_Rosemount, ~ meta_Rosemount$Ecotype, ~ meta_Rosemount$Temp)
-
+#
+# 
+# ############# Roseau ####
+# 
+# RDA_input %>%
+#   filter(grepl("Roseau",rownames(RDA_input))) -> RDA_input_Roseau
+# 
+# rownames(RDA_input_Roseau)
+# # Success!!
+# # Now for meta:
+# 
+# meta_Roseau <- meta %>%
+#   filter(grepl("Roseau",ID))
+# 
+# # Run RDA
+# SNP_rda_Roseau <- rda(RDA_input_Roseau ~ meta_Roseau$Ecotype + meta_Roseau$Temp)
+# # SNP_rda_Roseau <- rda(RDA_input_Roseau ~ meta_Roseau$Temp)
+# 
+# # Anova
+# rda.model.Roseau<-anova(SNP_rda_Roseau, step=1000, perm.max=1000, by= "terms")
+# 
+# 
+# # Model: rda(formula = RDA_input_Roseau ~ meta_Roseau$Ecotype + meta_Roseau$Temp)
+# #                      Df  Variance F       Pr(>F)
+# # meta_Roseau$Ecotype  3   6265.4   1.3029  0.116
+# # meta_Roseau$Temp     1   2698.6   1.6835  0.071 .
+# # Residual             3   4809.0
+# 
+# # Temp approaching significance: p = 0.071
+# 
+# # LESS significant when I take out ecotype as a term...
+# # Model: rda(formula = RDA_input_Roseau ~ meta_Roseau$Temp)
+# #                   Df  Variance  F       Pr(>F)
+# # meta_Roseau$Temp  1   2698.6    1.4621  0.129
+# # Residual          6   11074.4
+# 
+# 
+# smry_Roseau <- summary(SNP_rda_Roseau)
+# variance_Roseau <- SNP_rda_Roseau$CA$eig/SNP_rda_Roseau$tot.chi*100
+# #varp_Roseau <- varpart(RDA_input_Roseau, ~ meta_Roseau$Ecotype, ~ meta_Roseau$Temp)
+# summary_rda_Roseau <- data.frame(Term=row.names(rda.model.Roseau),
+#                               Df=rda.model.Roseau$Df,
+#                               Prop.Var = round(rda.model.Roseau$Variance/sum(rda.model.Roseau$Variance),3),
+#                               Fstat=round(rda.model.Roseau$F,2),
+#                               Pvalue=round(rda.model.Roseau$`Pr(>F)`,3),
+#                               Radj=as.numeric(RsquareAdj(SNP_rda_Roseau))[2])
+# 
 # # Get ready to plot
-df1_Rosemount  <- data.frame(smry_Rosemount$sites[,1:2])       # PC1 and PC2
-df2_Rosemount  <- data.frame(smry_Rosemount$biplot[,1:2])   # loadings for PC1 and PC2
-df1_Rosemount$Ecotype <- meta_Rosemount$Ecotype
-df1_Rosemount$Temp <- meta_Rosemount$Temp
-
-rda.plot.Rosemount <- ggplot(df1_Rosemount, aes(x=RDA1, y=RDA2), group = Temp) +
-  geom_point(aes(color = Temp),size=3) +
-  geom_hline(yintercept=0, linetype="dotted") +
-  geom_vline(xintercept=0, linetype="dotted") +
-  scale_color_manual(values=c("lightskyblue2", "salmon1")) +
-  labs(title = "Site: Rosemount", x = paste("RDA1 (", round(variance_Rosemount[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_Rosemount[2], 2),"%)")) +
-  theme_bw()
-
-
-# # Permanova
-rda.model.Rosemount<-anova(SNP_rda_Rosemount, step=1000, perm.max=1000, by= "terms")
-
-# # Model: rda(formula = RDA_input_Rosemount ~ meta_Rosemount$Ecotype + meta_Rosemount$Temp)
-# #                         Df   Variance F       Pr(>F)
-# # meta_Rosemount$Ecotype  3    20142    0.9990  0.402
-# # meta_Rosemount$Temp     1    18720    2.7855  0.025 *
-# # Residual                3    20162
-
-summary_rda_Rosemount <- data.frame(Term=row.names(rda.model.Rosemount),
-                                 Df=rda.model.Rosemount$Df,
-                                 Prop.Var = round(rda.model.Rosemount$Variance/sum(rda.model.Rosemount$Variance),3),
-                                 Fstat=round(rda.model.Rosemount$F,2),
-                                 Pvalue=round(rda.model.Rosemount$`Pr(>F)`,3),
-                                 Radj=as.numeric(RsquareAdj(SNP_rda_Rosemount))[2])
-
-# # Big figure
-rda.plot.Roseau + rda.plot.Rosemount + rda.plot.StPaul
-
-
-
-
-
-
-
-
-#########################write functions to do all this plotting ################
-
-# Define your functions
-metadata_generator <- function(site_name) {
-  metadata = meta %>% filter(grepl(site_name,ID))
-}
-
-RDA_input_generator <- function(site_name) {
-  RDA_input %>% filter(grepl(site_name,rownames(RDA_input))) 
-}
-
-tasks <- list(
-  list(func = metadata_generator, args = list(site_name = "Roseau")), #SNP RDA for everything 
-  list(func = metadata_generator, args = list(site_name = "Rosemount")),
-  list(func = metadata_generator, args = list(site_name = "StPaul")),
-  list(func = RDA_input_generator, args = list(site_name = "Roseau")), #SNP RDA for everything
-  list(func = RDA_input_generator, args = list(site_name = "Rosemount")),
-  list(func = RDA_input_generator, args = list(site_name = "StPaul"))
-  ) 
-# Function to call a given function with arguments from a list
-call_with_args <- function(tasks) {
-  do.call(tasks$func, tasks$args)
-}
-
-# Iterate over functions and argument sets and call the functions
-results <- lapply(tasks, call_with_args)
-
-
-
-RDAs <- function(RDA_input, metadata) {
-  #what the function does
-  rda(RDA_input ~ sample_metadata$Ecotype + sample_metdata$Temp)
-  return(result)
-}
-
-
-
+# df1_Roseau  <- data.frame(smry_Roseau$sites[,1:2])       # PC1 and PC2
+# df2_Roseau  <- data.frame(smry_Roseau$biplot[,1:2])   # loadings for PC1 and PC2
+# df1_Roseau$Ecotype <- meta_Roseau$Ecotype
+# df1_Roseau$Temp <- meta_Roseau$Temp
+# 
+# rda.plot.Roseau <- ggplot(df1_Roseau, aes(x=RDA1, y=RDA2), group = Temp) +
+#   geom_point(aes(color = Temp),size=3) +
+#   geom_hline(yintercept=0, linetype="dotted") +
+#   geom_vline(xintercept=0, linetype="dotted") +
+#   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
+#   labs(title = "Site: Roseau", x = paste("RDA1 (", round(variance_Roseau[1], 2),"%)"),
+#        y = paste("RDA1 (", round(variance_Roseau[2], 2),"%)")) +
+#   theme_bw()
+# 
+# rda.plot.Roseau
+# 
+# 
+# # # St Paul ####
+# RDA_input_StPaul <- RDA_input %>%
+#   filter(grepl("StPaul",rownames(RDA_input)))
+# 
+# rownames(RDA_input_StPaul)
+# # Success!!
+# # Now for meta:
+# 
+# meta_StPaul <- meta %>%
+#   filter(grepl("StPaul",ID))
+# 
+# #Run RDA
+# SNP_rda_StPaul <- rda(RDA_input_StPaul ~ meta_StPaul$Ecotype + meta_StPaul$Temp)
+# # SNP_rda_StPaul <- rda(RDA_input_StPaul ~ meta_StPaul$Temp)
+# 
+# smry_StPaul <- summary(SNP_rda_StPaul)
+# variance_StPaul <- SNP_rda_StPaul$CA$eig/SNP_rda_StPaul$tot.chi*100
+# #varp_StPaul <- varpart(RDA_input_StPaul, ~ meta_StPaul$Ecotype, ~ meta_StPaul$Temp)
+# 
+# # Get ready to plot
+# df1_StPaul  <- data.frame(smry_StPaul$sites[,1:2])       # PC1 and PC2
+# df2_StPaul  <- data.frame(smry_StPaul$biplot[,1:2])   # loadings for PC1 and PC2
+# df1_StPaul$Ecotype <- meta_StPaul$Ecotype
+# df1_StPaul$Temp <- meta_StPaul$Temp
+# 
+# rda.plot.StPaul <- ggplot(df1_StPaul, aes(x=RDA1, y=RDA2), group = Temp) +
+#   geom_point(aes(color = Temp),size=3) +
+#   geom_hline(yintercept=0, linetype="dotted") +
+#   geom_vline(xintercept=0, linetype="dotted") +
+#   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
+#   labs(title = "Site: St. Paul", x = paste("RDA1 (", round(variance_StPaul[1], 2),"%)"),
+#        y = paste("RDA1 (", round(variance_StPaul[2], 2),"%)")) +
+#   theme_bw()
+# 
+# 
+# # # Permanova
+# 
+# rda.model.StPaul<-anova(SNP_rda_StPaul, step=1000, perm.max=1000, by= "terms")
+# 
+# # Model: rda(formula = RDA_input_StPaul ~ meta_StPaul$Ecotype + meta_StPaul$Temp)
+# #                      Df Variance F       Pr(>F)
+# # meta_StPaul$Ecotype  3  14349.0  0.8217  0.579
+# # meta_StPaul$Temp     1   2505.9  0.4305  0.694
+# # Residual             3  17462.0
+# 
+# # p even HIGHER when we take out ecotype term
+# # Model: rda(formula = RDA_input_StPaul ~ meta_StPaul$Temp)
+# #                   Df    Variance  F       Pr(>F)
+# # meta_StPaul$Temp  1     2506      0.4726  0.702
+# # Residual          6     31811
+# 
+# summary_rda_StPaul <- data.frame(Term=row.names(rda.model.StPaul),
+#                                  Df=rda.model.StPaul$Df,
+#                                  Prop.Var = round(rda.model.StPaul$Variance/sum(rda.model.StPaul$Variance),3),
+#                                  Fstat=round(rda.model.StPaul$F,2),
+#                                  Pvalue=round(rda.model.StPaul$`Pr(>F)`,3),
+#                                  Radj=as.numeric(RsquareAdj(SNP_rda_StPaul))[2])
+# 
+# 
+# 
+# # # Rosemount ####
+# RDA_input_Rosemount <- RDA_input %>%
+#   filter(grepl("Rosemount",rownames(RDA_input)))
+# 
+# rownames(RDA_input_Rosemount)
+# # Success!!
+# # Now for meta:
+# 
+# meta_Rosemount <- meta %>%
+#   filter(grepl("Rosemount",ID))
+# 
+# # Run RDA
+# SNP_rda_Rosemount <- rda(RDA_input_Rosemount ~ meta_Rosemount$Ecotype + meta_Rosemount$Temp)
+# # SNP_rda_Rosemount <- rda(RDA_input_Rosemount ~ meta_Rosemount$Temp)
+# 
+# smry_Rosemount <- summary(SNP_rda_Rosemount)
+# variance_Rosemount <- SNP_rda_Rosemount$CA$eig/SNP_rda_Rosemount$tot.chi*100
+# varp_Rosemount <- varpart(RDA_input_Rosemount, ~ meta_Rosemount$Ecotype, ~ meta_Rosemount$Temp)
+# 
+# # # Get ready to plot
+# df1_Rosemount  <- data.frame(smry_Rosemount$sites[,1:2])       # PC1 and PC2
+# df2_Rosemount  <- data.frame(smry_Rosemount$biplot[,1:2])   # loadings for PC1 and PC2
+# df1_Rosemount$Ecotype <- meta_Rosemount$Ecotype
+# df1_Rosemount$Temp <- meta_Rosemount$Temp
+# 
+# rda.plot.Rosemount <- ggplot(df1_Rosemount, aes(x=RDA1, y=RDA2), group = Temp) +
+#   geom_point(aes(color = Temp),size=3) +
+#   geom_hline(yintercept=0, linetype="dotted") +
+#   geom_vline(xintercept=0, linetype="dotted") +
+#   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
+#   labs(title = "Site: Rosemount", x = paste("RDA1 (", round(variance_Rosemount[1], 2),"%)"),
+#        y = paste("RDA1 (", round(variance_Rosemount[2], 2),"%)")) +
+#   theme_bw()
+# 
+# 
+# # # Permanova
+# rda.model.Rosemount<-anova(SNP_rda_Rosemount, step=1000, perm.max=1000, by= "terms")
+# 
+# # # Model: rda(formula = RDA_input_Rosemount ~ meta_Rosemount$Ecotype + meta_Rosemount$Temp)
+# # #                         Df   Variance F       Pr(>F)
+# # # meta_Rosemount$Ecotype  3    20142    0.9990  0.402
+# # # meta_Rosemount$Temp     1    18720    2.7855  0.025 *
+# # # Residual                3    20162
+# 
+# summary_rda_Rosemount <- data.frame(Term=row.names(rda.model.Rosemount),
+#                                  Df=rda.model.Rosemount$Df,
+#                                  Prop.Var = round(rda.model.Rosemount$Variance/sum(rda.model.Rosemount$Variance),3),
+#                                  Fstat=round(rda.model.Rosemount$F,2),
+#                                  Pvalue=round(rda.model.Rosemount$`Pr(>F)`,3),
+#                                  Radj=as.numeric(RsquareAdj(SNP_rda_Rosemount))[2])
+# 
+# # # Big figure
+# rda.plot.Roseau + rda.plot.Rosemount + rda.plot.StPaul
+# 
+# 
+# 
 
 
 
@@ -492,7 +450,7 @@ for (site_name in site_names) {
   }
 }
 
-#the actual RDA analysis
+#the actual RDA analysis, and RDA summaries
 RDA_analyses_list <- list()
 
 for (i in seq_along(metadata_list)) {
@@ -505,7 +463,6 @@ for (i in seq_along(metadata_list)) {
     RDA_analyses_list[[metadata_df_name]] <- rda(data_input ~ metadata_df$Ecotype 
                                                  + metadata_df$Site 
                                                  + metadata_df$Temp)
-
     print("analysis")
   } 
   else {
@@ -520,11 +477,13 @@ for (i in seq_along(metadata_list)) {
 }
   
 
-###PLOTS
+###PLOTS AND SUMMARIES
 summaries_list <- list()
 variances_list <- list()
 RDA_plots <- list()
-# df_list <- list()
+permanovas_list <- list()
+rda_summaries_list <- list()
+
 
 
 for (i in seq_along(RDA_analyses_list)) {
@@ -536,6 +495,14 @@ for (i in seq_along(RDA_analyses_list)) {
   df1$Ecotype <- metadata_list[[item_name]]$Ecotype
   df1$Site <- metadata_list[[item_name]]$Site
   df1$Temp <- metadata_list[[item_name]]$Temp
+  permanovas_list[[item_name]] <-anova(item, step=1000, perm.max=1000, by= "terms")
+  
+  rda_summaries_list[[item_name]] <- data.frame(Term=row.names(permanovas_list[[item_name]]),
+                                Df=permanovas_list[[item_name]]$Df,
+                                Prop.Var = round(permanovas_list[[item_name]]$Variance/sum(permanovas_list[[item_name]]$Variance),3),
+                                Fstat=round(permanovas_list[[item_name]]$F,2),
+                                Pvalue=round(permanovas_list[[item_name]]$`Pr(>F)`,3),
+                                Radj=as.numeric(RsquareAdj(item))[2])
   
 
   if (length(unique(metadata_list[[item_name]]$Site)) >1) {
@@ -547,6 +514,7 @@ for (i in seq_along(RDA_analyses_list)) {
       labs(title = "RDA of Allele Frequencies", subtitle = "All sites", 
            x= paste("RDA1", round(variances_list[[item_name]][1], 2),"%"),
            y= paste("RDA2", round(variances_list[[item_name]][2], 2), "%"))
+    
   }
   else {
     RDA_plots[[item_name]] <- ggplot(df1, aes(x=RDA1, y=RDA2), group = Temp) +
@@ -562,4 +530,14 @@ for (i in seq_along(RDA_analyses_list)) {
 }
 
 
+
+
+
+
+
+ggarrange(plot_list = RDA_plots, ncol=2)
+# print(permanovas_list)
+# print(summaries_list)
+# print(variances_list)
+print(rda_summaries_list)
 
