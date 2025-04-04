@@ -56,12 +56,12 @@ created in kbase.us. This required aligning sequence data from each treatment to
 - input:
    - .sync file 
 - output: 
-   - .vcf file
+   - rc, pwc, and params file
 
 [SNP_RDA_RF.R](scripts/SNP_RDA_RF.R): take allele frequency differences, and perform RDA and permanova analyses in R. 
 
 - input: 
-   - .vcf file
+   - rc file
 - output:
    - plots, statistics
 

@@ -1,0 +1,2 @@
+#!/bin/bash 
+java -jar /home/paula/software/VarScan.v2.3.9.jar  mpileup2snp /home/paula/rhizobium/rhizobium_trapping/data/documentation-test.mpileup --output-vcf 1 > /home/paula/rhizobium/rhizobium_trapping/data/documentation-test.vcf
