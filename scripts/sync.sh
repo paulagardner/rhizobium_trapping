@@ -12,5 +12,5 @@ module load OpenJDK/jdk-20.0.2
 perl /gpfs/bio/xrq24scu/tools/popoolation2_1201/mpileup2sync.pl \
 	--fastq-type sanger \
 	--min-qual 20 \
-	--input /gpfs/bio/xrq24scu/rhizobium_trapping/data/documentation-test.mpileup \
-	--output /gpfs/bio/xrq24scu/rhizobium_trapping/data/old_documentation-test_revisions.sync
+	--input /gpfs/bio/xrq24scu/rhizobium_trapping/data/2025revisions.mpileup \
+	--output /gpfs/bio/xrq24scu/rhizobium_trapping/data/2025revisions.sync
