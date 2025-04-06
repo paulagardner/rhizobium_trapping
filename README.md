@@ -66,5 +66,21 @@ created in kbase.us. This required aligning sequence data from each treatment to
    - plots, statistics
 
 
+[mpileup_to_vcf.sh](scripts/mpileup_to_vcf.sh): take .mpileup file and convert to vcf for ease of filtering
+
+- input: 
+   - .mpileup file
+- output:
+   - .vcf (with many default filters)
+   
+[missingness_filter.sh](scripts/missingness_filter.sh): remove variants that have more than 30% missingness 
+- input: 
+   - .vcf file
+- output:
+   - filtered .vcf
+
+
+
+
 
 
