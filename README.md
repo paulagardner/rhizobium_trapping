@@ -56,15 +56,33 @@ created in kbase.us. This required aligning sequence data from each treatment to
 - input:
    - .sync file 
 - output: 
-   - .vcf file
+   - rc, pwc, and params file
 
 [SNP_RDA_RF.R](scripts/SNP_RDA_RF.R): take allele frequency differences, and perform RDA and permanova analyses in R. 
 
 - input: 
-   - .vcf file
+   - rc file
 - output:
    - plots, statistics
 
 
+[mpileup_to_vcf.sh](scripts/mpileup_to_vcf.sh): take .mpileup file and convert to vcf for ease of filtering
+
+- input: 
+   - .mpileup file
+- output:
+   - .vcf (with many default filters)
+   
+[missingness_filter.sh](scripts/missingness_filter.sh): remove variants that have more than 30% missingness 
+- input: 
+   - .vcf file
+- output:
+   - filtered .vcf
 
 
+[FST.R](scripts/FST.R): calculate pairwise FST after filtering scripts and creates plots
+
+- input: 
+   - filtered .vcf
+- output:
+   - plots, statistics

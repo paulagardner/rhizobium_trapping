@@ -8,7 +8,7 @@ library(tidyverse)
 library(wesanderson) # color schemes
 library(patchwork) # display two figures at once
 
-data <- read.delim("//wsl.localhost/Ubuntu/home/paula/rhizobium_trapping/data/samtools_1_10_test_rc", sep = "\t", header = T)
+data <- read.delim("snp_freq_diffs_test_mincov2_rc", sep = "\t", header = T)
 
 convert_and_replace <- function(data, start_column_index) {
   # Get the columns from the specified index to the end
@@ -189,7 +189,7 @@ rda.plot.Roseau <- ggplot(df1_Roseau, aes(x=RDA1, y=RDA2), group = Temp) +
   geom_vline(xintercept=0, linetype="dotted") +
   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
   labs(title = "Site: Roseau", x = paste("RDA1 (", round(variance_Roseau[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_Roseau[2], 2),"%)")) +
+       y = paste("RDA2 (", round(variance_Roseau[2], 2),"%)")) +
   theme_bw()
 
 
@@ -240,7 +240,7 @@ rda.plot.StPaul <- ggplot(df1_StPaul, aes(x=RDA1, y=RDA2), group = Temp) +
   geom_vline(xintercept=0, linetype="dotted") +
   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
   labs(title = "Site: St. Paul", x = paste("RDA1 (", round(variance_StPaul[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_StPaul[2], 2),"%)")) +
+       y = paste("RDA2 (", round(variance_StPaul[2], 2),"%)")) +
   theme_bw()
 
 
@@ -288,7 +288,7 @@ rda.plot.Rosemount <- ggplot(df1_Rosemount, aes(x=RDA1, y=RDA2), group = Temp) +
   geom_vline(xintercept=0, linetype="dotted") +
   scale_color_manual(values=c("lightskyblue2", "salmon1")) +
   labs(title = "Site: Rosemount", x = paste("RDA1 (", round(variance_Rosemount[1], 2),"%)"),
-       y = paste("RDA1 (", round(variance_Rosemount[2], 2),"%)")) +
+       y = paste("RDA2 (", round(variance_Rosemount[2], 2),"%)")) +
   theme_bw()
 
 
@@ -299,6 +299,3 @@ rda.plot.StPaul
 rda.plot.Rosemount
 rda.plot.Roseau + rda.plot.Rosemount + rda.plot.StPaul
 print(summary_rda_all)
-
-
-
