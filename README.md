@@ -80,7 +80,9 @@ created in kbase.us. This required aligning sequence data from each treatment to
    - filtered .vcf
 
 
+[FST.R](scripts/FST.R): calculate pairwise FST after filtering scripts and creates plots
 
-
-
-
+- input: 
+   - filtered .vcf
+- output:
+   - plots, statistics
