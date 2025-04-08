@@ -20,6 +20,8 @@ created in kbase.us. This required aligning sequence data from each treatment to
 * R packages: vegan, ggplot2, ggpubr, dplyr, tidyverse, tidyr, patchwork, wesanderson
 * PoPoolation2 version [1201](https://sourceforge.net/projects/popoolation2/files/popoolation2_1201.zip/download)
 * samtools version 1.10
+* bcftools 1.15.1
+* VarScan.v2.3.9
 
 
 ***
@@ -66,12 +68,12 @@ created in kbase.us. This required aligning sequence data from each treatment to
    - plots, statistics
 
 
-[mpileup_to_vcf.sh](scripts/mpileup_to_vcf.sh): take .mpileup file and convert to vcf for ease of filtering
+[mpileup_to_vcf.sh](scripts/mpileup_to_vcf.sh): take .mpileup file and convert to vcf for ease of filtering.  We used default filters, of particular relevance:  min-coverage=8  min-var-freq=15,--p-value=99e-02)
 
 - input: 
    - .mpileup file
 - output:
-   - .vcf (with many default filters)
+   - .vcf file
    
 [missingness_filter.sh](scripts/missingness_filter.sh): remove variants that have more than 30% missingness 
 - input: 
@@ -80,7 +82,7 @@ created in kbase.us. This required aligning sequence data from each treatment to
    - filtered .vcf
 
 
-[FST.R](scripts/FST.R): calculate pairwise FST after filtering scripts and creates plots
+[FST.R](scripts/FST.R): calculate pairwise FST after filtering scripts and create 
 
 - input: 
    - filtered .vcf
